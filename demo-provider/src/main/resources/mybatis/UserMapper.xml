@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+
+	<resultMap id="BaseResultMap" type="com.skycloud.demo.entity.UserEntity">
+		<result column="uuid" property="uuid" />
+		<result column="username" property="username" />
+		<result column="password" property="password" />
+		<result column="phone_number" property="phoneNumber" />
+		<result column="id_card_number" property="idCardNumber" />
+		<result column="address" property="address" />
+		<result column="birthday" property="birthday" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		uuid, 
+		username, 
+		password, 
+		phone_number, 
+		id_card_number, 
+		address, 
+		birthday, 
+		create_time, 
+		update_time
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="save" parameterType="com.skycloud.demo.entity.UserEntity">
+		insert into user(
+		<include refid="Base_Column_List" />
+		) values (
+			#{uuid}, 
+			#{username}, 
+			#{password}, 
+			#{phoneNumber}, 
+			#{idCardNumber}, 
+			#{address}, 
+			#{birthday}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="delete" parameterType="com.skycloud.demo.api.dto.request.UserRequest">
+		delete from user 
+		where 
+		UUID = #{uuid}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="edit" parameterType="com.skycloud.demo.entity.UserEntity">
+		update user
+		<set>
+			<if test="uuid != null">
+				uuid = #{uuid}, 
+			</if>
+			<if test="username != null">
+				username = #{username}, 
+			</if>
+			<if test="password != null">
+				password = #{password}, 
+			</if>
+			<if test="phoneNumber != null">
+				phone_number = #{phoneNumber}, 
+			</if>
+			<if test="idCardNumber != null">
+				id_card_number = #{idCardNumber}, 
+			</if>
+			<if test="address != null">
+				address = #{address}, 
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday}, 
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime}, 
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime}
+			</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="com.skycloud.demo.api.dto.request.UserRequest" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where
+		UUID = #{uuid}
+	</select>
+
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="String">
+		delete from user
+		where
+		UUID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 列表 -->
+	<select id="list" parameterType="com.skycloud.demo.api.dto.request.UserRequest" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		user t
+		where 1=1
+			<if test="uuid != null  and uuid != ''">
+				AND uuid = #{uuid}
+			</if>
+			<if test="username != null  and username != ''">
+				AND username = #{username}
+			</if>
+			<if test="password != null  and password != ''">
+				AND password = #{password}
+			</if>
+			<if test="phoneNumber != null  and phoneNumber != ''">
+				AND phone_number = #{phoneNumber}
+			</if>
+			<if test="idCardNumber != null  and idCardNumber != ''">
+				AND id_card_number = #{idCardNumber}
+			</if>
+			<if test="address != null  and address != ''">
+				AND address = #{address}
+			</if>
+			<if test="birthday != null ">
+				AND birthday = #{birthday}
+			</if>
+		
+		<if test="beginTime != null">
+				<![CDATA[ AND CREATE_TIME >= #{beginTime} ]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[ AND CREATE_TIME <= #{endTime} ]]>
+		</if>
+		<if test="updateTime != null">
+			AND UPDATE_TIME = #{updateTime}
+		</if>
+	</select>
+	
+</mapper>
